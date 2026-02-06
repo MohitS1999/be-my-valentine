@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will You Be My Valentine?</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;600&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 10;
+            max-width: 90%;
+            width: 400px;
+        }
+
+        h1 {
+            font-family: 'Pacifico', cursive;
+            color: #ff4d6d;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .gif-container img {
+            width: 200px;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px; /* Creates space between the buttons */
+            margin-top: 20px;
+            position: relative;
+            height: 60px;
+            width: 100%;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            white-space: nowrap; /* Keeps text on one line */
+        }
+
+        .yes-btn {
+            background-color: #ff4d6d;
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+        }
+
+        .yes-btn:hover {
+            transform: scale(1.1);
+            background-color: #e63950;
+        }
+
+        .no-btn {
+            background-color: #fff;
+            color: #ff4d6d;
+            border: 2px solid #ff4d6d;
+            /* REMOVED position: absolute; so it sits next to Yes */
+        }
+
+        .hearts {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .heart {
+            position: absolute;
+            bottom: -100px;
+            background-color: rgba(255, 255, 255, 0.5);
+            display: inline-block;
+            height: 30px;
+            width: 30px;
+            margin: 0 10px;
+            transform: rotate(-45deg);
+            animation: float 6s linear infinite;
+        }
+
+        .heart:before, .heart:after {
+            content: "";
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.5);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+        }
+
+        .heart:before { top: -15px; left: 0; }
+        .heart:after { left: 15px; top: 0; }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(-45deg) scale(0.8); opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(-45deg) scale(1.2); opacity: 0; }
+        }
+
+        .hidden-message {
+            display: none;
+        }
+        
+        .hidden-message h2 {
+            color: #ff4d6d;
+            font-family: 'Pacifico', cursive;
+        }
+
+        .hidden-message p {
+            color: #555;
+            font-size: 1.1rem;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="hearts"></div>
+
+    <div class="container">
+        <div id="question-screen">
+            <div class="gif-container">
+                <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYmZlZmRjcnZqamV6dGg2eXRodHJ2aXN0aDhmbW54bmw4bmM4Ynd6eSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/cLS1cfxvGOPVpf9g3y/giphy.gif" alt="Cute Bear">
+            </div>
+            
+            <h1>Will you be my Valentine?</h1>
+            
+            <div class="buttons">
+                <button class="btn yes-btn" onclick="acceptLove()">Yes</button>
+                <button class="btn no-btn" id="noBtn" onmouseover="moveButton()">No</button>
+            </div>
+        </div>
+
+        <div id="success-screen" class="hidden-message">
+            <div class="gif-container">
+                <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMnI2MWh5M2ZlZGd2bXJ6czl4cnV4anhqa2hvZmF5eWlkd3I3dDJwdiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/T86i6yDyOYz7J6dPhf/giphy.gif" alt="Happy Hug">
+            </div>
+            <h2>Yay! I knew it! ❤️</h2>
+            <p>I love you so much!</p>
+        </div>
+    </div>
+
+    <script>
+        function moveButton() {
+            const noBtn = document.getElementById('noBtn');
+            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 100);
+            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 100);
+            
+            // This line makes the button jump out of its original spot only when hovered
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = `${x}px`;
+            noBtn.style.top = `${y}px`;
+        }
+
+        function acceptLove() {
+            document.getElementById('question-screen').style.display = 'none';
+            document.getElementById('success-screen').style.display = 'block';
+        }
+
+        function createHearts() {
+            const heartsContainer = document.querySelector('.hearts');
+            for(let i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('heart');
+                heart.style.left = Math.random() * 100 + "vw";
+                heart.style.animationDuration = Math.random() * 3 + 4 + "s";
+                heart.style.animationDelay = Math.random() * 5 + "s";
+                heartsContainer.appendChild(heart);
+            }
+        }
+        
+        createHearts();
+    </script>
+</body>
+</html>
