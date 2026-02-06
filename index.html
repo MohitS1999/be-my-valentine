@@ -24,18 +24,18 @@
         .side-gallery {
             position: absolute;
             top: 0;
-            width: 140px; /* Width of the photo strips */
+            width: 140px;
             height: 100vh;
             overflow: hidden;
-            z-index: 5; /* Behind the main card */
-            /* Make it slightly transparent so it doesn't distract too much */
+            z-index: 5;
             opacity: 0.8; 
             mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
             -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
         }
 
-        .left-gallery { left: 20px; }
-        .right-gallery { right: 20px; }
+        /* CHANGED: Increased spacing from 20px to 50px */
+        .left-gallery { left: 50px; }
+        .right-gallery { right: 50px; }
 
         .gallery-track {
             display: flex;
@@ -52,15 +52,8 @@
             border: 3px solid rgba(255, 255, 255, 0.6);
         }
 
-        /* Animation: Moving DOWN (Up -> Down) */
-        .move-down {
-            animation: scrollDown 20s linear infinite;
-        }
-
-        /* Animation: Moving UP (Down -> Up) */
-        .move-up {
-            animation: scrollUp 20s linear infinite;
-        }
+        .move-down { animation: scrollDown 25s linear infinite; }
+        .move-up { animation: scrollUp 25s linear infinite; }
 
         @keyframes scrollDown {
             0% { transform: translateY(-50%); }
@@ -72,8 +65,7 @@
             100% { transform: translateY(-50%); }
         }
 
-        /* Hide galleries on small phones so buttons are clickable */
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
             .side-gallery { display: none; }
         }
 
@@ -166,7 +158,6 @@
             backdrop-filter: blur(5px);
         }
 
-        /* Floating Hearts Background (Behind everything) */
         .hearts {
             position: absolute;
             top: 0;
@@ -206,13 +197,11 @@
 <body>
 
     <div class="side-gallery left-gallery">
-        <div class="gallery-track move-down" id="leftTrack">
-            </div>
+        <div class="gallery-track move-down" id="leftTrack"></div>
     </div>
 
     <div class="side-gallery right-gallery">
-        <div class="gallery-track move-up" id="rightTrack">
-            </div>
+        <div class="gallery-track move-up" id="rightTrack"></div>
     </div>
 
     <div class="hearts"></div>
@@ -242,21 +231,29 @@
     </div>
 
     <script>
-        // --- CONFIGURATION: ADD HER PHOTOS HERE ---
-        // You can add as many as you want like: 'photo1.jpg', 'photo2.jpg', 'photo3.jpg'
-        const yourPhotos = [
+        // --- CONFIGURATION: TWO SEPARATE LISTS ---
+        
+        // Photos for the LEFT side (Moves Down)
+        const leftPhotos = [
             'kalash_passport.jpeg', 
             'kalash_passport.jpeg', 
-            'kalash_passport.jpeg', 
-            'kalash_passport.jpeg'
+            // Add more files here like: 'photo1.jpg', 'photo2.jpg'
         ];
+
+        // Photos for the RIGHT side (Moves Up)
+        const rightPhotos = [
+            'kalash_passport.jpeg',
+            'kalash_passport.jpeg',
+            // Add different files here like: 'funny.jpg', 'cute.jpg'
+        ];
+
 
         // --- Logic to populate the side galleries ---
         function populateGallery(trackId, photoList) {
             const track = document.getElementById(trackId);
             
-            // We duplicate the list to make the loop seamless
-            const combinedList = [...photoList, ...photoList]; 
+            // Duplicate list 4 times for smoother infinite scroll
+            const combinedList = [...photoList, ...photoList, ...photoList, ...photoList]; 
             
             combinedList.forEach(src => {
                 const img = document.createElement('img');
@@ -265,9 +262,8 @@
             });
         }
 
-        // Fill the galleries
-        populateGallery('leftTrack', yourPhotos);
-        populateGallery('rightTrack', yourPhotos);
+        populateGallery('leftTrack', leftPhotos);
+        populateGallery('rightTrack', rightPhotos);
 
 
         // --- Button Logic ---
@@ -285,7 +281,6 @@
             document.getElementById('success-screen').style.display = 'block';
             
             confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#ff4d6d', '#ffffff', '#ff7eb3'] });
-            
             var duration = 3000;
             var end = Date.now() + duration;
             (function frame() {
