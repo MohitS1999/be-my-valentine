@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Will You Be My Valentine?</title>
+    <title>For My Valentine ❤️</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600&display=swap');
 
         body {
             margin: 0;
@@ -14,78 +15,102 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            /* A more elegant, deep romantic gradient */
+            background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
             font-family: 'Poppins', sans-serif;
             overflow: hidden;
         }
 
+        /* This is the "Glassmorphism" effect */
         .container {
             text-align: center;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.25); /* More transparent */
+            backdrop-filter: blur(15px); /* The frost effect */
+            -webkit-backdrop-filter: blur(15px);
+            padding: 50px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
             position: relative;
             z-index: 10;
             max-width: 90%;
-            width: 400px;
+            width: 420px;
         }
 
         h1 {
-            font-family: 'Pacifico', cursive;
-            color: #ff4d6d;
-            font-size: 2.5rem;
-            margin-bottom: 20px;
+            font-family: 'Dancing Script', cursive; /* More romantic font */
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            font-size: 3rem;
+            margin-bottom: 10px;
+            margin-top: 0;
+        }
+
+        p.subtitle {
+            color: #fff;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            font-weight: 500;
         }
 
         .gif-container img {
-            width: 200px;
-            height: auto;
-            border-radius: 10px;
-            margin-bottom: 20px;
+            width: 220px;
+            height: 220px; /* Forces a square/circle shape */
+            object-fit: cover; /* Crops the photo perfectly */
+            border-radius: 50%; /* Makes your photo a circle */
+            border: 5px solid white;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            margin-bottom: 10px;
+            transition: transform 0.3s;
+        }
+        
+        .gif-container img:hover {
+            transform: scale(1.05) rotate(2deg);
         }
 
         .buttons {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 20px; /* Creates space between the buttons */
+            gap: 20px;
             margin-top: 20px;
             position: relative;
-            height: 60px;
+            height: 70px; /* Space for movement */
             width: 100%;
         }
 
         .btn {
-            padding: 12px 30px;
+            padding: 14px 40px;
             font-size: 1.2rem;
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.3s ease;
             font-family: 'Poppins', sans-serif;
             font-weight: 600;
-            white-space: nowrap; /* Keeps text on one line */
+            white-space: nowrap;
         }
 
         .yes-btn {
-            background-color: #ff4d6d;
-            color: white;
-            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+            background-color: #fff;
+            color: #ff4d6d;
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
+            animation: heartbeat 2s infinite; /* The heartbeat effect */
         }
 
         .yes-btn:hover {
             transform: scale(1.1);
-            background-color: #e63950;
+            background-color: #ffeef2;
         }
 
         .no-btn {
-            background-color: #fff;
-            color: #ff4d6d;
-            border: 2px solid #ff4d6d;
-            /* REMOVED position: absolute; so it sits next to Yes */
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            backdrop-filter: blur(5px);
         }
 
+        /* Floating Hearts Background */
         .hearts {
             position: absolute;
             top: 0;
@@ -100,30 +125,20 @@
         .heart {
             position: absolute;
             bottom: -100px;
-            background-color: rgba(255, 255, 255, 0.5);
-            display: inline-block;
-            height: 30px;
-            width: 30px;
-            margin: 0 10px;
-            transform: rotate(-45deg);
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 2rem;
             animation: float 6s linear infinite;
         }
 
-        .heart:before, .heart:after {
-            content: "";
-            position: absolute;
-            background-color: rgba(255, 255, 255, 0.5);
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
         }
 
-        .heart:before { top: -15px; left: 0; }
-        .heart:after { left: 15px; top: 0; }
-
-        @keyframes float {
-            0% { transform: translateY(0) rotate(-45deg) scale(0.8); opacity: 1; }
-            100% { transform: translateY(-100vh) rotate(-45deg) scale(1.2); opacity: 0; }
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.08); box-shadow: 0 0 20px rgba(255,255,255,0.6); }
+            100% { transform: scale(1); }
         }
 
         .hidden-message {
@@ -131,13 +146,14 @@
         }
         
         .hidden-message h2 {
-            color: #ff4d6d;
-            font-family: 'Pacifico', cursive;
+            color: white;
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
         }
 
         .hidden-message p {
-            color: #555;
-            font-size: 1.1rem;
+            color: white;
+            font-size: 1.3rem;
         }
 
     </style>
@@ -149,51 +165,91 @@
     <div class="container">
         <div id="question-screen">
             <div class="gif-container">
-                <img src="kalash_passport.jpeg" alt="Cute Bear">
+                <img src="kalash_passport.jpeg" alt="Us" onerror="this.src='https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYmZlZmRjcnZqamV6dGg2eXRodHJ2aXN0aDhmbW54bmw4bmM4Ynd6eSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/cLS1cfxvGOPVpf9g3y/giphy.gif'">
             </div>
             
             <h1>Will you be my Valentine?</h1>
+            <p class="subtitle">I have a question for you...</p>
             
             <div class="buttons">
-                <button class="btn yes-btn" onclick="acceptLove()">Yes</button>
+                <button class="btn yes-btn" onclick="acceptLove()">Yes!</button>
                 <button class="btn no-btn" id="noBtn" onmouseover="moveButton()">No</button>
             </div>
         </div>
 
         <div id="success-screen" class="hidden-message">
             <div class="gif-container">
-                <img src="kalash_passport.jpeg" alt="Happy Hug">
+                <img src="kalash_passport.jpeg" alt="Happy Us">
             </div>
-            <h2>Yay! I knew it! ❤️</h2>
-            <p>I love you so much❤️! </p>
+            <h2>I Knew It! ❤️</h2>
+            <p>You just made me the happiest person!</p>
         </div>
     </div>
 
     <script>
+        // Move the No button logic
         function moveButton() {
             const noBtn = document.getElementById('noBtn');
             const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 100);
             const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 100);
             
-            // This line makes the button jump out of its original spot only when hovered
             noBtn.style.position = 'fixed';
             noBtn.style.left = `${x}px`;
             noBtn.style.top = `${y}px`;
         }
 
+        // Logic for clicking Yes
         function acceptLove() {
             document.getElementById('question-screen').style.display = 'none';
             document.getElementById('success-screen').style.display = 'block';
+            
+            // Trigger the Confetti Explosion!
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#ff4d6d', '#ffffff', '#ff7eb3']
+            });
+
+            // Keep firing small bursts for celebration
+            var duration = 3000;
+            var end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                particleCount: 3,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0 },
+                colors: ['#ff4d6d', '#ffffff']
+                });
+                confetti({
+                particleCount: 3,
+                angle: 120,
+                spread: 55,
+                origin: { x: 1 },
+                colors: ['#ff4d6d', '#ffffff']
+                });
+
+                if (Date.now() < end) {
+                requestAnimationFrame(frame);
+                }
+            }());
         }
 
+        // Generate Background Hearts
         function createHearts() {
             const heartsContainer = document.querySelector('.hearts');
-            for(let i = 0; i < 20; i++) {
+            const heartSymbols = ['❤️', '💖', '💕', '🥰', '🌹'];
+            
+            for(let i = 0; i < 25; i++) {
                 const heart = document.createElement('div');
                 heart.classList.add('heart');
+                // Randomly pick a heart symbol
+                heart.innerHTML = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
                 heart.style.left = Math.random() * 100 + "vw";
                 heart.style.animationDuration = Math.random() * 3 + 4 + "s";
-                heart.style.animationDelay = Math.random() * 5 + "s";
+                heart.style.fontSize = Math.random() * 20 + 20 + "px"; // Random sizes
                 heartsContainer.appendChild(heart);
             }
         }
