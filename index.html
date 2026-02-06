@@ -15,17 +15,73 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            /* A more elegant, deep romantic gradient */
             background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
             font-family: 'Poppins', sans-serif;
             overflow: hidden;
         }
 
-        /* This is the "Glassmorphism" effect */
+        /* --- SIDE GALLERY STYLES --- */
+        .side-gallery {
+            position: absolute;
+            top: 0;
+            width: 140px; /* Width of the photo strips */
+            height: 100vh;
+            overflow: hidden;
+            z-index: 5; /* Behind the main card */
+            /* Make it slightly transparent so it doesn't distract too much */
+            opacity: 0.8; 
+            mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+        }
+
+        .left-gallery { left: 20px; }
+        .right-gallery { right: 20px; }
+
+        .gallery-track {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .gallery-track img {
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            object-fit: cover;
+            border: 3px solid rgba(255, 255, 255, 0.6);
+        }
+
+        /* Animation: Moving DOWN (Up -> Down) */
+        .move-down {
+            animation: scrollDown 20s linear infinite;
+        }
+
+        /* Animation: Moving UP (Down -> Up) */
+        .move-up {
+            animation: scrollUp 20s linear infinite;
+        }
+
+        @keyframes scrollDown {
+            0% { transform: translateY(-50%); }
+            100% { transform: translateY(0); }
+        }
+
+        @keyframes scrollUp {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-50%); }
+        }
+
+        /* Hide galleries on small phones so buttons are clickable */
+        @media (max-width: 768px) {
+            .side-gallery { display: none; }
+        }
+
+        /* --- MAIN CARD STYLES --- */
         .container {
             text-align: center;
-            background: rgba(255, 255, 255, 0.25); /* More transparent */
-            backdrop-filter: blur(15px); /* The frost effect */
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             padding: 50px;
             border-radius: 25px;
@@ -38,7 +94,7 @@
         }
 
         h1 {
-            font-family: 'Dancing Script', cursive; /* More romantic font */
+            font-family: 'Dancing Script', cursive;
             color: #fff;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
             font-size: 3rem;
@@ -55,9 +111,9 @@
 
         .gif-container img {
             width: 220px;
-            height: 220px; /* Forces a square/circle shape */
-            object-fit: cover; /* Crops the photo perfectly */
-            border-radius: 50%; /* Makes your photo a circle */
+            height: 220px;
+            object-fit: cover;
+            border-radius: 50%;
             border: 5px solid white;
             box-shadow: 0 8px 20px rgba(0,0,0,0.15);
             margin-bottom: 10px;
@@ -75,7 +131,7 @@
             gap: 20px;
             margin-top: 20px;
             position: relative;
-            height: 70px; /* Space for movement */
+            height: 70px;
             width: 100%;
         }
 
@@ -95,7 +151,7 @@
             background-color: #fff;
             color: #ff4d6d;
             box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
-            animation: heartbeat 2s infinite; /* The heartbeat effect */
+            animation: heartbeat 2s infinite;
         }
 
         .yes-btn:hover {
@@ -110,7 +166,7 @@
             backdrop-filter: blur(5px);
         }
 
-        /* Floating Hearts Background */
+        /* Floating Hearts Background (Behind everything) */
         .hearts {
             position: absolute;
             top: 0;
@@ -141,24 +197,23 @@
             100% { transform: scale(1); }
         }
 
-        .hidden-message {
-            display: none;
-        }
-        
-        .hidden-message h2 {
-            color: white;
-            font-family: 'Dancing Script', cursive;
-            font-size: 3rem;
-        }
-
-        .hidden-message p {
-            color: white;
-            font-size: 1.3rem;
-        }
+        .hidden-message { display: none; }
+        .hidden-message h2 { color: white; font-family: 'Dancing Script', cursive; font-size: 3rem; }
+        .hidden-message p { color: white; font-size: 1.3rem; }
 
     </style>
 </head>
 <body>
+
+    <div class="side-gallery left-gallery">
+        <div class="gallery-track move-down" id="leftTrack">
+            </div>
+    </div>
+
+    <div class="side-gallery right-gallery">
+        <div class="gallery-track move-up" id="rightTrack">
+            </div>
+    </div>
 
     <div class="hearts"></div>
 
@@ -187,73 +242,72 @@
     </div>
 
     <script>
-        // Move the No button logic
+        // --- CONFIGURATION: ADD HER PHOTOS HERE ---
+        // You can add as many as you want like: 'photo1.jpg', 'photo2.jpg', 'photo3.jpg'
+        const yourPhotos = [
+            'kalash_passport.jpeg', 
+            'kalash_passport.jpeg', 
+            'kalash_passport.jpeg', 
+            'kalash_passport.jpeg'
+        ];
+
+        // --- Logic to populate the side galleries ---
+        function populateGallery(trackId, photoList) {
+            const track = document.getElementById(trackId);
+            
+            // We duplicate the list to make the loop seamless
+            const combinedList = [...photoList, ...photoList]; 
+            
+            combinedList.forEach(src => {
+                const img = document.createElement('img');
+                img.src = src;
+                track.appendChild(img);
+            });
+        }
+
+        // Fill the galleries
+        populateGallery('leftTrack', yourPhotos);
+        populateGallery('rightTrack', yourPhotos);
+
+
+        // --- Button Logic ---
         function moveButton() {
             const noBtn = document.getElementById('noBtn');
             const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 100);
             const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 100);
-            
             noBtn.style.position = 'fixed';
             noBtn.style.left = `${x}px`;
             noBtn.style.top = `${y}px`;
         }
 
-        // Logic for clicking Yes
         function acceptLove() {
             document.getElementById('question-screen').style.display = 'none';
             document.getElementById('success-screen').style.display = 'block';
             
-            // Trigger the Confetti Explosion!
-            confetti({
-                particleCount: 150,
-                spread: 70,
-                origin: { y: 0.6 },
-                colors: ['#ff4d6d', '#ffffff', '#ff7eb3']
-            });
-
-            // Keep firing small bursts for celebration
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#ff4d6d', '#ffffff', '#ff7eb3'] });
+            
             var duration = 3000;
             var end = Date.now() + duration;
-
             (function frame() {
-                confetti({
-                particleCount: 3,
-                angle: 60,
-                spread: 55,
-                origin: { x: 0 },
-                colors: ['#ff4d6d', '#ffffff']
-                });
-                confetti({
-                particleCount: 3,
-                angle: 120,
-                spread: 55,
-                origin: { x: 1 },
-                colors: ['#ff4d6d', '#ffffff']
-                });
-
-                if (Date.now() < end) {
-                requestAnimationFrame(frame);
-                }
+                confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ff4d6d', '#ffffff'] });
+                confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#ff4d6d', '#ffffff'] });
+                if (Date.now() < end) requestAnimationFrame(frame);
             }());
         }
 
-        // Generate Background Hearts
         function createHearts() {
             const heartsContainer = document.querySelector('.hearts');
             const heartSymbols = ['❤️', '💖', '💕', '🥰', '🌹'];
-            
             for(let i = 0; i < 25; i++) {
                 const heart = document.createElement('div');
                 heart.classList.add('heart');
-                // Randomly pick a heart symbol
                 heart.innerHTML = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
                 heart.style.left = Math.random() * 100 + "vw";
                 heart.style.animationDuration = Math.random() * 3 + 4 + "s";
-                heart.style.fontSize = Math.random() * 20 + 20 + "px"; // Random sizes
+                heart.style.fontSize = Math.random() * 20 + 20 + "px";
                 heartsContainer.appendChild(heart);
             }
         }
-        
         createHearts();
     </script>
 </body>
